@@ -1,0 +1,50 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script>
+    let ws;
+    window.addEventListener('load', () => {
+      const name = prompt('What is your name?')
+
+      ws = new WebSocket('ws://localhost:8080/ws?username=' + name)
+      ws.onopen = () => {
+        console.log('connection opened')
+
+
+      }
+
+      ws.onmessage = (ev) => {
+        console.log('new message - ', ev)
+        console.log(JSON.parse(ev.data))
+      }
+
+    })
+    
+
+    let value = ''
+    function onChange(instance) {
+      console.log('new value - ', instance.value)
+      value = instance.value
+    }
+
+    function onSend() {
+      console.log('sending - ', value)
+      ws.send(JSON.stringify({
+        namespace: 'online',
+        body: {user: 'me', message: value}
+      }))
+    }
+  </script>
+</head>
+<body>
+  <div id="wrapper">
+    <textarea id="text" onchange="onChange(this)" name="" id="" cols="30" rows="10"></textarea>
+    <br>
+    <br>
+    <button id="btn" onclick="onSend()">≥ Send</button>
+  </div>
+</body>
+</html>
